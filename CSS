@@ -1,0 +1,20 @@
+#designTable
+{
+	border: 0px solid #000000;
+	width: 100%;
+	height: 70px;
+	//background-color: #BDB76B;
+	text-align: center;
+	font-family:sans-serif;
+	background-image:url("background.jpg");
+}
+#accordion {  
+    width: 800px;  
+    margin: 80px auto;
+	background:black;  
+     
+    font-size: 15pt;  
+    line-height: 26pt; 
+	 
+}
+.ui-accordion-header { background-color: blue; }
