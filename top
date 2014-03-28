@@ -1,0 +1,70 @@
+<html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+function sparqlQueryJson(queryStr, endpoint, callback, isDebug) {
+      var querypart = "query=" + escape(queryStr);
+    
+      // Get our HTTP request object.
+      var xmlhttp = null;
+      if(window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+     } else if(window.ActiveXObject) {
+       // Code for older versions of IE, like IE6 and before.
+       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+     } else {
+       alert('Perhaps your browser does not support XMLHttpRequests?');
+     }
+    
+     // Set up a POST with JSON result format.
+     xmlhttp.open('POST', endpoint, true); // GET can have caching probs, so POST
+     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+     xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
+    
+     // Set up callback to get the response asynchronously.
+     xmlhttp.onreadystatechange = function() {
+       if(xmlhttp.readyState == 4) {
+         if(xmlhttp.status == 200) {
+           // Do something with the results
+           if(isDebug) alert(xmlhttp.responseText);
+           callback(xmlhttp.responseText);
+         } else {
+           // Some kind of error occurred.
+           alert("Sparql query error: " + xmlhttp.status + " "
+               + xmlhttp.responseText);
+         }
+       }
+     };
+     // Send the query to the endpoint.
+     xmlhttp.send(querypart);
+    
+     // Done; now just wait for the callback to be called.
+    };
+</script>
+    
+
+</head>
+<body>
+<table id="designTable" border="0" cellspacing="0" cellpadding="30"> 
+<tr> 
+<td colspan="3" width="1280" height= "70" style="vertical-align: top"><b><h1 style="color:black;font-size:55px;text-align:Center;vertical-align:middle;font-family:Comic Sans;">The visualization of open data<h1></b></td>
+</tr>
+<tr> 
+ <td width="90" height= "700" style="vertical-align: top">
+<ul>
+ <a href="index.shtml">Home</a>
+ <br></br>
+ <a href="ourQueries.shtml">Visualise CSO data that we have already queried</a>
+<br></br>
+<a href="theirQueries.shtml">Visualise your own data using SPARQL</a>
+<br></br>
+<a href="worldpop.shtml">New graphs of population </a>
+<br></br>
+<a href="info.shtml">SPARQL Information</a>
+ </td> 
+<td width="1280" height= "700">
+</ul
