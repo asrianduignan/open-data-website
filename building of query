@@ -1,10 +1,5 @@
-<!--#include virtual="top.html" -->
 <script type="text/javascript">
-      var endpoint = "http://sws.ifi.uio.no/sparql/world";
-      var query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>PREFIX owl: <http://www.w3.org/2002/07/owl#>PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>PREFIX w: <http://sws.ifi.uio.no/ont/world.owl#>PREFIX dbpo: <http://dbpedia.org/ontology/>PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>PREFIX dct: <http://purl.org/dc/terms/>PREFIX fn: <http://www.w3.org/2005/xpath-functions#>PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>PREFIX npdv: <http://sws.ifi.uio.no/vocab/npd#>PREFIX npdv2: <http://sws.ifi.uio.no/vocab/npd-v2#>PREFIX geos: <http://www.opengis.net/ont/geosparql#>SELECT * WHERE{ []  a w:Country ; w:hasName ?Name ; w:hasCountryPopulation ?Population ; } ORDER BY DESC(?Population) LIMIT 10" ;
-	  
-	  var endpoint = "http://sws.ifi.uio.no/sparql/world";
-	var query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>PREFIX owl: <http://www.w3.org/2002/07/owl#>PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>PREFIX w: <http://sws.ifi.uio.no/ont/world.owl#>PREFIX dbpo: <http://dbpedia.org/ontology/>PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>PREFIX dct: <http://purl.org/dc/terms/>PREFIX fn: <http://www.w3.org/2005/xpath-functions#>PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>PREFIX npdv: <http://sws.ifi.uio.no/vocab/npd#>PREFIX npdv2: <http://sws.ifi.uio.no/vocab/npd-v2#>PREFIX geos: <http://www.opengis.net/ont/geosparql#>SELECT * WHERE{ [] a w:City ; w:hasName ?Name ; w:hasCityPopulation ?Population ; } ORDER BY DESC(?Population) LIMIT 10";
+     
 		var resultArray = ['test'];
       // Define a callback function to receive the SPARQL JSON result.
       function myCallback(str) {
@@ -12,14 +7,9 @@
         var jsonObj = eval('(' + str + ')');
 
         // Build up an array of results.
-		
-		
 		 resultArray = new Array();
-		
 		resultArray[0] = jsonObj.head.vars;
-		
-		
-        for(var i = 0; i <  jsonObj.results.bindings.length; i++) {
+	for(var i = 0; i <  jsonObj.results.bindings.length; i++) {
 			resultArray[i+1] = new Array();
 			resultArray[i+1][0] = jsonObj.results.bindings[i].Name.value;
 			resultArray[i+1][1] = jsonObj.results.bindings[i].Population.value / 1000;
@@ -27,7 +17,7 @@
      }
       
      // Make the query.
-     sparqlQueryJson(query, endpoint, myCallback, false);
+    // sparqlQueryJson(query, endpoint, myCallback, false);
       
 	  
       google.load("visualization", "1", {packages:["corechart"]});
@@ -40,15 +30,55 @@
 		
 		if (item == 'query1')
 		{
-				sparqlQueryJson(query, endpoint, myCallback, false);
+		
+		function sparqlQueryJson(queryStr, endpoint, callback, isDebug) {
+      var querypart = "query=" + escape(queryStr);
+    
+      // Get our HTTP request object.
+      var xmlhttp = null;
+      if(window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+     } else if(window.ActiveXObject) {
+       // Code for older versions of IE, like IE6 and before.
+       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+     } else {
+       alert('Perhaps your browser does not support XMLHttpRequests?');
+     }
+    
+     // Set up a POST with JSON result format.
+     xmlhttp.open('POST', endpoint, true); // GET can have caching probs, so POST
+     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+     xmlhttp.setRequestHeader("Accept", "application/sparql-results+json");
+    
+     // Set up callback to get the response asynchronously.
+     xmlhttp.onreadystatechange = function() {
+       if(xmlhttp.readyState == 4) {
+         if(xmlhttp.status == 200) {
+           // Do something with the results
+           if(isDebug) alert(xmlhttp.responseText);
+           callback(xmlhttp.responseText);
+         } else {
+           // Some kind of error occurred.
+           alert("Sparql query error: " + xmlhttp.status + " "
+               + xmlhttp.responseText);
+         }
+       }
+     };
+     // Send the query to the endpoint.
+     xmlhttp.send(querypart);
+    
+     // Done; now just wait for the callback to be called.
+    };
+	var endpoint = "http://sws.ifi.uio.no/sparql/world";
+      var query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>PREFIX owl: <http://www.w3.org/2002/07/owl#>PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>PREFIX w: <http://sws.ifi.uio.no/ont/world.owl#>PREFIX dbpo: <http://dbpedia.org/ontology/>PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>PREFIX dct: <http://purl.org/dc/terms/>PREFIX fn: <http://www.w3.org/2005/xpath-functions#>PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>PREFIX npdv: <http://sws.ifi.uio.no/vocab/npd#>PREFIX npdv2: <http://sws.ifi.uio.no/vocab/npd-v2#>PREFIX geos: <http://www.opengis.net/ont/geosparql#>SELECT * WHERE{ []  a w:Country ; w:hasName ?Name ; w:hasCountryPopulation ?Population ; } ORDER BY DESC(?Population) LIMIT 10" ;
+		
+		sparqlQueryJson(query, endpoint, myCallback, false);
 		var data = google.visualization.arrayToDataTable(resultArray);
 
         var options = {
           title: document.selectionForm.graphName.value,
           hAxis: {title: 'Note: All Values are in thousands',  titleTextStyle: {color: 'red'}}
-		  
-		  
-        };
+		 };
             if (item2 == 'bar'){
 			var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
         chart.draw(data, options);}
@@ -62,11 +92,10 @@
 			}
 			
       }
-	  
-
-	   else if (item == 'query2')
+	 else if (item == 'query2')
 		{
-		
+		var endpoint = "http://sws.ifi.uio.no/sparql/world";
+		var query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>PREFIX owl: <http://www.w3.org/2002/07/owl#>PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>PREFIX w: <http://sws.ifi.uio.no/ont/world.owl#>PREFIX dbpo: <http://dbpedia.org/ontology/>PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>PREFIX dct: <http://purl.org/dc/terms/>PREFIX fn: <http://www.w3.org/2005/xpath-functions#>PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>PREFIX npdv: <http://sws.ifi.uio.no/vocab/npd#>PREFIX npdv2: <http://sws.ifi.uio.no/vocab/npd-v2#>PREFIX geos: <http://www.opengis.net/ont/geosparql#>SELECT * WHERE{ [] a w:City ; w:hasName ?Name ; w:hasCityPopulation ?Population ; } ORDER BY DESC(?Population) LIMIT 10";
 		var data = google.visualization.arrayToDataTable(resultArray);
 
         var options = {
@@ -131,5 +160,4 @@
 	</tr>
 </table>
 </form>
-<div id="chart_div" style="width: 900px; height: 500px;"></div>
-<!--#include virtual="bottom.html" -->
+<div id="chart_div" style="width: 900px; h
