@@ -1,3 +1,4 @@
+<!--#include virtual="top.html" -->
 <script type="text/javascript">
      
 		var resultArray = ['test'];
@@ -120,8 +121,7 @@
 	  
 	}
     </script>
-<title> Pre Written - Easy Graphs </title>
-<h2>Welcome to our Pre-queried page for the Central Statistics Office</h2>
+
 <form name='selectionForm'>
 <table border=0 style= "align:center">
 	<tr>
@@ -160,4 +160,5 @@
 	</tr>
 </table>
 </form>
-<div id="chart_div" style="width: 900px; h
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+<!--#include virtual="bottom.html" -->
